@@ -72,6 +72,7 @@ string Monster::getAttackName(Monster* objectMonster_)
 {
     srand(time(0));
     int chance_ = rand() % 3;
+    // test
 
     if(objectMonster_ -> getType() == "Fire")
     {
