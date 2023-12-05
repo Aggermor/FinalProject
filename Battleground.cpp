@@ -150,8 +150,9 @@ void Battleground::battleLoop()
 {
     while(objectPlayerPtr -> getSize() > 0 && objectOpponentPtr -> getSize() > 0)
     {
-        bool player_blocked = false;
-        bool player_switched = false;
+        bool player_blocked = false; // oponent can still heal
+        bool player_switched = false; // oponent can still heal
+        bool skip_opponent_turn = false; // used to loop again
 
         // Player's turn to battle
         battleInterface();
@@ -159,7 +160,7 @@ void Battleground::battleLoop()
         {
 
         case 1: // attack
-            cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_-> getName() << " uses" << objectPlayerMonsterPtr_ -> getAttackName() << "!" << endl;
+            cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_-> getName() << " uses " << objectPlayerMonsterPtr_ -> getAttackName() << "!" << endl;
             objectOpponentMonsterPtr_ -> setHealth(objectOpponentMonsterPtr_ -> getHealth() - getBattleAttack(objectPlayerMonsterPtr_, objectOpponentMonsterPtr_));
             battleCheck();
             break;
@@ -179,9 +180,11 @@ void Battleground::battleLoop()
             break;
         case 4: // information
             cout << "[INFORMATION PLACEHOLDER]" << endl;
+            skip_opponent_turn = true; // used to loop again
             break;
         default:
-            cout << "Not possible!" << endl;
+            cout << "Not possible! Enter a valid number." << endl;
+            skip_opponent_turn = true; // used to loop again
             break;
         }
 
@@ -189,36 +192,37 @@ void Battleground::battleLoop()
         if(objectPlayerPtr -> getSize() == 0 || objectOpponentPtr -> getSize() == 0) {break;}
 
         // Opponent's turn to battle
-
-        switch(objectOpponentPtr -> randomChoice())
+        if(!skip_opponent_turn) // do not skip turn
         {
-        case 1:
-
-            if(player_blocked) {
-                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
-                    cout << "The attack was BLOCKED!" << endl;}
-            else if(player_switched) {cout << "The challenger bides their time!" << endl;}
-            else
+            switch(objectOpponentPtr -> randomChoice())
             {
-                cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
-                objectPlayerMonsterPtr_ -> setHealth(objectPlayerMonsterPtr_ -> getHealth() - getBattleAttack(objectOpponentMonsterPtr_, objectPlayerMonsterPtr_));
+            case 1:
+                if(player_blocked) {
+                        cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses " << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
+                        cout << "The attack was BLOCKED!" << endl;}
+                else if(player_switched) {cout << "The challenger bides their time!" << endl;}
+                else
+                {
+                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
+                    objectPlayerMonsterPtr_ -> setHealth(objectPlayerMonsterPtr_ -> getHealth() - getBattleAttack(objectOpponentMonsterPtr_, objectPlayerMonsterPtr_));
+                    battleCheck();
+                }
+                break;
+            case 2:
+                cout << objectOpponentPtr -> getName() << "'s" " REINFORCES their health!" << endl<< endl;
+                objectOpponentMonsterPtr_ -> setHealth((objectOpponentMonsterPtr_ -> getMAX_HEALTH() * 0.40) + objectOpponentMonsterPtr_ -> getHealth()); // +40% Max health;
                 battleCheck();
+                break;
+            default:
+                cout << "Not possible!" << endl;
+                break;
             }
-            break;
-        case 2:
-            cout << objectOpponentPtr -> getName() << "'s" " REINFORCES their health!" << endl<< endl;
-            objectOpponentMonsterPtr_ -> setHealth((objectOpponentMonsterPtr_ -> getMAX_HEALTH() * 0.40) + objectOpponentMonsterPtr_ -> getHealth()); // +40% Max health;
-            battleCheck();
-            break;
-        default:
-            cout << "Not possible!" << endl;
-            break;
         }
 
         // halt interface so the player can summarize turn before next screen is created
-        cout << "Press any key to continue: ";  // i just changed the phrasing to be any key
+        cout << "Press any key to continue: ";
         char input;
-        cin >> input; // can be any letter
+        cin >> input;
     }
 }
 

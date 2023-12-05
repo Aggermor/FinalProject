@@ -75,7 +75,6 @@ string Monster::getAttackName() const
     srand(time(0));
     int name_size = attack_name.size();
     int random_index = rand() % name_size; // from 0 to amount of names constucted -1
-
     return attack_name[random_index];
 }
 

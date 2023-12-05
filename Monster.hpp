@@ -1,6 +1,5 @@
 #ifndef MONSTER_HPP_INCLUDED
 #define MONSTER_HPP_INCLUDED
-#include <vector>
 
 class Monster
 {
@@ -10,7 +9,7 @@ private:
     double attack;
     double health;
     double MAX_HEALTH; // cant use const in a constructor I guess but we should pretend it is
-    vector<std::string> attack_name;
+    std::vector<std::string> attack_name;
 
 public:
     Monster();
