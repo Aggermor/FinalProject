@@ -2,7 +2,6 @@
 #include <vector>
 #include "Monster.hpp"
 
-
 using namespace std;
 /* Monster */
 
@@ -26,12 +25,14 @@ Monster::Monster(string name_, string type_)
         MAX_HEALTH = 175;
         health = 175;
         attack = 25;
+        attack_name = {"Sear", "Flamethrower", "Torch"};
     }
     else if(type == "Fire")
     {
         MAX_HEALTH = 100;
         health = 100;
         attack = 40;
+        attack_name = {"Aqua Strike", "Splash", "Spray"};
     }
 
     else if(type == "Wind")
@@ -39,6 +40,7 @@ Monster::Monster(string name_, string type_)
         MAX_HEALTH = 30;
         health = 30;
         attack = 95;
+        attack_name = {"Breeze", "FeatherSlash", "Gust"};
     }
     else
     {
@@ -68,11 +70,20 @@ double Monster::getMAX_HEALTH() const
     return MAX_HEALTH;
 }
 
+string Monster::getAttackName() const
+{
+    srand(time(0));
+    int name_size = attack_name.size();
+    int random_index = rand() % name_size; // from 0 to amount of names constucted -1
+
+    return attack_name[random_index];
+}
+
+/*
 string Monster::getAttackName(Monster* objectMonster_)
 {
     srand(time(0));
     int chance_ = rand() % 3;
-    // test
 
     if(objectMonster_ -> getType() == "Fire")
     {
@@ -95,6 +106,7 @@ string Monster::getAttackName(Monster* objectMonster_)
     }
 
 }
+*/
 
 
 // setters

@@ -159,7 +159,7 @@ void Battleground::battleLoop()
         {
 
         case 1: // attack
-            cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_-> getName() << " uses" << objectPlayerMonsterPtr_ -> getAttackName(objectPlayerMonsterPtr_) << "!" << endl;
+            cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_-> getName() << " uses" << objectPlayerMonsterPtr_ -> getAttackName() << "!" << endl;
             objectOpponentMonsterPtr_ -> setHealth(objectOpponentMonsterPtr_ -> getHealth() - getBattleAttack(objectPlayerMonsterPtr_, objectOpponentMonsterPtr_));
             battleCheck();
             break;
@@ -195,12 +195,12 @@ void Battleground::battleLoop()
         case 1:
 
             if(player_blocked) {
-                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName(objectPlayerMonsterPtr_) << "!" << endl;
+                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
                     cout << "The attack was BLOCKED!" << endl;}
             else if(player_switched) {cout << "The challenger bides their time!" << endl;}
             else
             {
-                cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName(objectPlayerMonsterPtr_) << "!" << endl;
+                cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
                 objectPlayerMonsterPtr_ -> setHealth(objectPlayerMonsterPtr_ -> getHealth() - getBattleAttack(objectOpponentMonsterPtr_, objectPlayerMonsterPtr_));
                 battleCheck();
             }

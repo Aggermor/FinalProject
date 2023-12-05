@@ -1,5 +1,6 @@
 #ifndef MONSTER_HPP_INCLUDED
 #define MONSTER_HPP_INCLUDED
+#include <vector>
 
 class Monster
 {
@@ -9,6 +10,7 @@ private:
     double attack;
     double health;
     double MAX_HEALTH; // cant use const in a constructor I guess but we should pretend it is
+    vector<std::string> attack_name;
 
 public:
     Monster();
@@ -19,7 +21,8 @@ public:
     double getAttack() const;
     double getHealth() const;
     double getMAX_HEALTH() const;
-    std::string getAttackName(Monster* objectMonster_);
+    // std::string getAttackName(Monster* objectMonster_); // I plan on recreating this without argument to look cleaner, see constructor and new vector member variable
+    std::string getAttackName() const;
 
     void setName(std::string name_);
     void setType(std::string type_);
