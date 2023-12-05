@@ -197,13 +197,12 @@ void Battleground::battleLoop()
             switch(objectOpponentPtr -> randomChoice())
             {
             case 1:
-                if(player_blocked) {
-                        cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses " << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
-                        cout << "The attack was BLOCKED!" << endl;}
-                else if(player_switched) {cout << "The challenger bides their time!" << endl;}
+                cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses " << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
+                
+                if(player_blocked) {cout << "The attack was BLOCKED!" << endl;}
+                else if(player_switched) {cout << "The challenger bides their time to attack..." << endl;}
                 else
                 {
-                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl;
                     objectPlayerMonsterPtr_ -> setHealth(objectPlayerMonsterPtr_ -> getHealth() - getBattleAttack(objectOpponentMonsterPtr_, objectPlayerMonsterPtr_));
                     battleCheck();
                 }
