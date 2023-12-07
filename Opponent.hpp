@@ -7,7 +7,7 @@ public:
     Opponent();
 
     Monster selectMonster();
-    int randomChoice();
+    int randomChoice(Monster* objectMonster_);
     int randomMonsterChoice();
 };
 

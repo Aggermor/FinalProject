@@ -1,13 +1,17 @@
 #include <iostream>
 #include <vector>
+#include <ctime>
+#include <cstdlib>
 #include "Monster.hpp"
 
 using namespace std;
-/* Monster */
 
-// constructor
+/*Define Monster Constructors and member functions/variables*/
+
+//Constructor
 Monster::Monster()
 {
+    numberTag = 0;
     name = "NA";
     type = "NA";
     attack = 0;
@@ -17,38 +21,44 @@ Monster::Monster()
 
 Monster::Monster(string name_, string type_)
 {
+    numberTag = 0;
     name = name_;
     type = type_;
 
     if(type == "Water")
     {
-        MAX_HEALTH = 175;
-        health = 175;
+        MAX_HEALTH = 150;
+        health = 150;
         attack = 25;
-        attack_name = {"Sear", "Flamethrower", "Torch"};
+        attack_name = {"Aqua Strike", "Splash", "Spray"};
     }
     else if(type == "Fire")
     {
         MAX_HEALTH = 100;
         health = 100;
-        attack = 40;
-        attack_name = {"Aqua Strike", "Splash", "Spray"};
+        attack = 50;
+        attack_name = {"Sear", "Flamethrower", "Torch"};
     }
 
     else if(type == "Wind")
     {
-        MAX_HEALTH = 30;
-        health = 30;
+        MAX_HEALTH = 75;
+        health = 75;
         attack = 95;
         attack_name = {"Breeze", "FeatherSlash", "Gust"};
     }
     else
     {
-        cout << "error with Monster construction" << endl;
+        cout << "MONSTER CONSTRUCTION ERROR!" << endl;
     }
 }
 
-// getters
+//Getters
+int Monster::getNumberTag() const
+{
+    return numberTag;
+
+}
 string Monster::getName() const
 {
     return name;
@@ -72,43 +82,14 @@ double Monster::getMAX_HEALTH() const
 
 string Monster::getAttackName() const
 {
-    srand(time(0));
-    int name_size = attack_name.size();
-    int random_index = rand() % name_size; // from 0 to amount of names constucted -1
-    return attack_name[random_index];
+    return attack_name[rand() % attack_name.size()]; //Randomizes attack names from vector of names
 }
 
-/*
-string Monster::getAttackName(Monster* objectMonster_)
+//Setters
+void Monster::setNumberTag(int numberTag_)
 {
-    srand(time(0));
-    int chance_ = rand() % 3;
-
-    if(objectMonster_ -> getType() == "Fire")
-    {
-        string fireNames[3] = {" Sear", " Flamethrower", " Torch"};
-        return fireNames[chance_];
-    }
-    else if(objectMonster_ -> getType() == "Water")
-    {
-        string waterNames[3] = {" Aqua Strike", " Splash", " Spray"};
-        return waterNames[chance_];
-    }
-    else if (objectMonster_ -> getType() == "Wind")
-    {
-         string windNames[3] = { " Breeze", " FeatherSlash", " Gust" };
-         return windNames[chance_];
-    }
-    else
-    {
-        return " Oops";
-    }
-
+    numberTag = numberTag_;
 }
-*/
-
-
-// setters
 void Monster::setName(string name_)
 {
     name = name_;
@@ -126,11 +107,20 @@ void Monster::setHealth(double health_)
     health = health_;
 }
 
-// iostream overload
+/*Returns true (or false) by comparing the name and number tag of current monster object
+(referenced by 'this') with the values of the objectMonster_*/
 bool Monster::operator ==(const Monster& objectMonster_)
 {
-    return (this -> name == objectMonster_.getName());
+    return (this -> name == objectMonster_.getName() && this -> numberTag == objectMonster_.getNumberTag());
 }
+
+/*
+this -> name and this -> numberTag access the name and numberTag of the current object
+(the left-hand side of the equality). objectMonster_.getName()
+ and objectMonster_.getNumberTag() access the corresponding values of the right-hand side.
+*/
+
+//Overloaded stream insertion operator that allows you to print the details of a monster to an output stream
 ostream& operator <<(ostream& out, const Monster& objectMonster_)
 {
 
