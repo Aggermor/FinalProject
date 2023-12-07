@@ -4,23 +4,28 @@
 class Monster
 {
 private:
+    int numberTag;
     std::string name;
     std::string type;
     double attack;
     double health;
     double MAX_HEALTH; // cant use const in a constructor I guess but we should pretend it is
+    std::vector<std::string> attack_name;
 
 public:
     Monster();
     Monster(std::string name_, std::string type_);
 
+    int getNumberTag() const;
     std::string getName() const;
     std::string getType() const;
     double getAttack() const;
     double getHealth() const;
     double getMAX_HEALTH() const;
-    std::string getAttackName(Monster* objectMonster_);
 
+    std::string getAttackName() const;
+
+    void setNumberTag(int numberTag_);
     void setName(std::string name_);
     void setType(std::string type_);
     void setAttack(double attack_);

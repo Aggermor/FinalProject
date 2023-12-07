@@ -6,9 +6,32 @@
 #include "Player.hpp"
 #include "Battleground.hpp"
 #include "Opponent.hpp"
-#include "main.hpp"
 
 using namespace std;
+
+namespace mainExtraFunction
+{
+    int monsterSpecificSelection(Player& objectPlayer_)
+    {
+        int userChoice_ = 0;
+
+        while(1)
+        {
+            cout << "Choose [#] a fighter: ";
+            cin >> userChoice_;
+
+            if(userChoice_ > 0 && userChoice_ <= objectPlayer_.getSize())
+            {
+                cout << endl;
+                return userChoice_ - 1;
+            }
+            else
+            {
+                cout << "Not possible! Type a number from 1 to " << objectPlayer_.getSize() << endl;
+            }
+        }
+}
+}
 
 /* Battleground */
 
@@ -35,10 +58,23 @@ Battleground::~Battleground()
 // critical hit roll
 bool Battleground::battleCriticalHit(int chance_)
 {
-    srand(time(0));
+    //srand(time(0));
     int critRoll = rand() % 100 + 1;  // from 1 to 100.
     if(critRoll <= chance_) {return true;} // (<= 10) is 10%, (<= 20) is 20%
     else {return false;}
+}
+
+double Battleground::getBattleHealth(Monster* objectMonster_)
+{
+    if((objectMonster_ -> getMAX_HEALTH())*0.4 + objectMonster_ -> getHealth())
+    {
+        cout << "Oop! " << objectMonster_ -> getName() << " is fully healed!" << endl << endl;
+        return objectMonster_ -> getMAX_HEALTH();
+    }
+    else
+    {
+        return objectMonster_ -> getMAX_HEALTH()*0.4 + objectMonster_ -> getHealth();
+    }
 }
 
 // damage & type advantage calculations
@@ -115,16 +151,16 @@ double Battleground::getBattleAttack(Monster* objectMonsterAttack_, Monster* obj
 void Battleground::choosePlayerMonsterToFight()
 {
     objectPlayerPtr -> displayAllMonster();
-    objectPlayerMonsterPtr_ = new Monster(objectPlayerPtr -> selectMonster(monsterSpecificSelection(*objectPlayerPtr)));
+    objectPlayerMonsterPtr_ = new Monster(objectPlayerPtr -> selectMonster(mainExtraFunction::monsterSpecificSelection(*objectPlayerPtr)));
 
-    cout << objectPlayerPtr -> getName() << " chooses " << objectPlayerMonsterPtr_ -> getName() << "!" << endl;
+    cout << objectPlayerPtr -> getName() << " chooses " << objectPlayerMonsterPtr_ -> getName() << "!" << endl << endl;
 }
 
 void Battleground::chooseOpponentMonsterToFight()
 {
     objectOpponentMonsterPtr_ = new Monster(objectOpponentPtr -> Opponent::selectMonster());
 
-    cout << objectOpponentPtr -> getName() << " chooses " << objectOpponentMonsterPtr_ -> getName() << "!" << endl;
+    cout << objectOpponentPtr -> getName() << " chooses " << objectOpponentMonsterPtr_ -> getName() << "!" << endl << endl;
 }
 
 void Battleground::battleInterface()
@@ -139,49 +175,69 @@ void Battleground::battleInterface()
     cout << "Duck: " << objectPlayerMonsterPtr_ -> getName() << endl;
     cout << "Type: " << objectPlayerMonsterPtr_ -> getType() << endl;
     cout << "Health: " << objectPlayerMonsterPtr_ -> getHealth() << endl;
-    cout << "[1] Peck (attack): " << objectPlayerMonsterPtr_ -> getAttack() << endl;
-    cout << "[2] Roost (heal): " << objectPlayerMonsterPtr_ -> getMAX_HEALTH() * 0.4 << endl;
-    cout << "[3] Switch Ducks " << endl;
-    cout << "[4] Information about moves " << endl;
     cout << "***************************************************************" << endl << endl;
+    cout << "[1] Attack: " << objectPlayerMonsterPtr_ -> getAttack() << endl;
+    cout << "[2] Roost: " << objectPlayerMonsterPtr_ -> getMAX_HEALTH() * 0.4 << endl;
+    cout << "[3] Switch Ducks " << endl;
+    cout << "[4] Information about moves " << endl << endl;
+}
+int Battleground::battleInput()
+{
+
+    int userChoice_;
+    cout << "Action [#]: ";
+    cin >> userChoice_;
+    cout << endl;
+    return userChoice_;
 }
 
 void Battleground::battleLoop()
 {
     while(objectPlayerPtr -> getSize() > 0 && objectOpponentPtr -> getSize() > 0)
     {
-        bool player_blocked = false;
-        bool player_switched = false;
+        bool player_blocked = false; // oponent can still heal
+        bool player_switched = false; // oponent can still heal
+        bool skip_opponent_turn = false; // used to loop again
 
         // Player's turn to battle
         battleInterface();
-        switch(battleSelection()) // battleSelection() defined in main, could it be moved battleground class for simplicity?
+        switch(battleInput()) // battleSelection() defined in main, could it be moved battleground class for simplicity?
         {
 
         case 1: // attack
-            cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_-> getName() << " uses" << objectPlayerMonsterPtr_ -> getAttackName(objectPlayerMonsterPtr_) << "!" << endl;
+            cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_-> getName() << " uses " << objectPlayerMonsterPtr_ -> getAttackName() << "!" << endl;
             objectOpponentMonsterPtr_ -> setHealth(objectOpponentMonsterPtr_ -> getHealth() - getBattleAttack(objectPlayerMonsterPtr_, objectOpponentMonsterPtr_));
             battleCheck();
             break;
         case 2: // heal
-            cout << objectPlayerPtr -> getName() << "'s" " REINFORCES their health!" << endl << endl;
-            objectPlayerMonsterPtr_ -> setHealth((objectPlayerMonsterPtr_ -> getMAX_HEALTH() * 0.40) + objectPlayerMonsterPtr_ -> getHealth()); // +40% Max health;
+            cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_-> getName() << " REINFORCES their health!" << endl;
+
+            objectPlayerMonsterPtr_ -> setHealth(getBattleHealth(objectPlayerMonsterPtr_));
+
             player_blocked = rand() % 2;  // 50% chance to block next attack;
             battleCheck();
             break;
         case 3: // switch
             cout << objectPlayerPtr -> getName() << " SWITCHES out " << objectPlayerMonsterPtr_-> getName() << endl;
+
             player_switched = true;
 
             objectPlayerPtr -> updateMonsterInVector(objectPlayerMonsterPtr_);
 
             choosePlayerMonsterToFight();
+
             break;
         case 4: // information
-            cout << "[INFORMATION PLACEHOLDER]" << endl;
+            cout << "Pressing 1. to Attack causes your duck to attack the opponent's duck. Attacks have a bonus with the correct TYPE matchup - or detriments. All attacks have a critical bonus chance." << endl;
+
+            cout << "Pressing 2. to Roost increases your health by however many points on display." << endl;
+
+            cout << "Pressing 3. to switch out a duck will put another duck on deck, but all damage done to them and/or health built up are saved." << endl << endl;
+            skip_opponent_turn = true; // used to loop again
             break;
         default:
-            cout << "Not possible!" << endl;
+            cout << "Not possible! Enter a valid number." << endl;
+            skip_opponent_turn = true; // used to loop again
             break;
         }
 
@@ -189,36 +245,40 @@ void Battleground::battleLoop()
         if(objectPlayerPtr -> getSize() == 0 || objectOpponentPtr -> getSize() == 0) {break;}
 
         // Opponent's turn to battle
-
-        switch(objectOpponentPtr -> randomChoice())
+        if(!skip_opponent_turn) // do not skip turn
         {
-        case 1:
-
-            if(player_blocked) {
-                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName(objectPlayerMonsterPtr_) << "!" << endl;
-                    cout << "The attack was BLOCKED!" << endl;}
-            else if(player_switched) {cout << "The challenger bides their time!" << endl;}
-            else
+            switch(objectOpponentPtr -> randomChoice(objectOpponentMonsterPtr_))
             {
-                cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses" << objectOpponentMonsterPtr_ -> getAttackName(objectPlayerMonsterPtr_) << "!" << endl;
-                objectPlayerMonsterPtr_ -> setHealth(objectPlayerMonsterPtr_ -> getHealth() - getBattleAttack(objectOpponentMonsterPtr_, objectPlayerMonsterPtr_));
+            case 1:
+
+                if(player_blocked)
+                {
+                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses " << objectOpponentMonsterPtr_ -> getAttackName() << "!" << endl << endl;
+                    cout << objectPlayerPtr -> getName() << "'s " << objectPlayerMonsterPtr_ -> getName() <<" BLOCKS the attack!" << endl <<  endl;
+                }
+                else if(player_switched) {cout << "The challenger bides their time..." << endl <<  endl;}
+                else
+                {
+                    cout << objectOpponentPtr -> getName() << "'s " << objectOpponentMonsterPtr_-> getName() << " uses " << objectOpponentMonsterPtr_ -> getAttackName() << "!"<< endl; // needs to be only applied if the opponent attacks
+                    objectPlayerMonsterPtr_ -> setHealth(objectPlayerMonsterPtr_ -> getHealth() - getBattleAttack(objectOpponentMonsterPtr_, objectPlayerMonsterPtr_));
+                    battleCheck();
+                }
+                break;
+            case 2:
+                cout << objectOpponentPtr -> getName() << "'s" " REINFORCES their health!" << endl;
+                objectOpponentMonsterPtr_ -> setHealth(getBattleHealth(objectOpponentMonsterPtr_));
                 battleCheck();
+                break;
+            default:
+                cout << "Not possible!" << endl;
+                break;
             }
-            break;
-        case 2:
-            cout << objectOpponentPtr -> getName() << "'s" " REINFORCES their health!" << endl<< endl;
-            objectOpponentMonsterPtr_ -> setHealth((objectOpponentMonsterPtr_ -> getMAX_HEALTH() * 0.40) + objectOpponentMonsterPtr_ -> getHealth()); // +40% Max health;
-            battleCheck();
-            break;
-        default:
-            cout << "Not possible!" << endl;
-            break;
         }
 
         // halt interface so the player can summarize turn before next screen is created
-        cout << "Press any key to continue: ";  // i just changed the phrasing to be any key
+        cout << "Press any key to continue: ";
         char input;
-        cin >> input; // can be any letter
+        cin >> input;
     }
 }
 
@@ -226,7 +286,7 @@ void Battleground::battleCheck()
 {
     if(objectPlayerMonsterPtr_ -> getHealth() <= 0)
     {
-        cout << "Oh! " << objectPlayerPtr -> getName() << "'s "<< objectPlayerMonsterPtr_ -> getName() << " is down!" << endl;
+        cout << "Oh! " << objectPlayerPtr -> getName() << "'s "<< objectPlayerMonsterPtr_ -> getName() << " is down!" << endl << endl;
 
         objectPlayerPtr -> removeMonster(*objectPlayerMonsterPtr_);
 

@@ -21,6 +21,7 @@ public:
     void setName(string name_);
 
     // indexing
+    void monsterTagging();
     void updateMonsterInVector(Monster* objectMonster_);
     void addMonster(Monster objectMonster_);
     void removeMonster(Monster objectMonster_);

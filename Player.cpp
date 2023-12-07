@@ -3,8 +3,6 @@
 #include "Monster.hpp"
 #include "Player.hpp"
 
-/* Player */
-
 // constructor
 Player::Player()
 {
@@ -64,6 +62,7 @@ void Player::updateMonsterInVector(Monster* objectMonster_)
     {
         if(monsterInventory[i] == *objectMonster_)
         {
+            found = true;
             monsterInventory[i] = *objectMonster_;
             break;
         }
@@ -88,4 +87,12 @@ void Player::displayAllMonster()
 Monster Player::selectMonster(int index_)
 {
     return monsterInventory[index_];
+}
+
+void Player::monsterTagging()
+{
+    for(int i = 0; i < monsterInventory.size(); i++)
+    {
+        monsterInventory[i].setNumberTag(i);
+    }
 }

@@ -6,38 +6,52 @@
 #include "Player.hpp"
 #include "Battleground.hpp"
 #include "Opponent.hpp"
-#include "main.hpp"
 
 using namespace std;
 
-void opponentRandomizer(Opponent objectOpponent_[]);
+void opponentRandomizer(Opponent objectOpponent_[], const Monster objectMonsterArray_[]);
 
 void titleScreen();
+
 void nameSelection(Player& objectPlayer_);
-void monsterSelection(Player& objectPlayer_);
+void monsterSelection(Player& objectPlayer_, const Monster objectMonsterArray_[]);
 int monsterSpecificSelection(Player& objectPlayer_);
 bool yes_noSelection();
 
 void battleScreen(Opponent& objectOpponent_);
 int battleSelection();
 
+const int MONSTER_SIZE = 6;
+
 int main()
 {
+    srand(time(0));
+
+    Monster arrayMonster[MONSTER_SIZE] =
+    {
+        Monster("Aeroquack", "Wind"),
+        Monster("Zephyrtail", "Wind"),
+        Monster("Aquaquack", "Water"),
+        Monster("Torrentail", "Water"),
+        Monster("Saxoheat", "Fire"),
+        Monster("Charyuga", "Fire")
+    };
+
     bool userVictory = 0;
     Opponent opponents[5];
     Player player1;
 
-    opponentRandomizer(opponents);  // randomizes a group of 5 opponents along with 3 random monsters
+    opponentRandomizer(opponents, arrayMonster);  // randomizes a group of 5 opponents along with 3 random monsters
 
 
     titleScreen();
 
     nameSelection(player1);
-    monsterSelection(player1);
+    monsterSelection(player1, arrayMonster);
 
     int loopingCount = 0;
 
-    while(loopingCount < 6)
+    while(loopingCount < 6) // less than six because there are 5 opponents
     {
         Battleground battleTime(player1, opponents[loopingCount]);
 
@@ -86,28 +100,16 @@ int main()
 }
 
 // functions
-void opponentRandomizer(Opponent objectOpponent_[])
+void opponentRandomizer(Opponent objectOpponent_[], const Monster objectMonsterArray_[])
 {
-    Monster arrayMonster[6] =
-    {
-        Monster("Aeroquack", "Wind"),
-        Monster("Zephyrtail", "Wind"),
-        Monster("Aquaquack", "Water"),
-        Monster("Torrentail", "Water"),
-        Monster("Saxoheat", "Fire"),
-        Monster("Charyuga", "Fire")
-    };
-
     string name[5] = { "Jerry", "Rick", "Morty", "Summer", "Beth" };
-
-    srand(time(0));
 
     for(int i = 0; i < 5; i++)
     {
         objectOpponent_[i].setName(name[rand()% 5]);
-        for(int j = 0; j < 3; j++)
+        for(int j = 0; j < 3; j++) // has to be three because opponent has to have 3 buddies
         {
-            objectOpponent_[i].addMonster(arrayMonster[rand() % 6]);
+            objectOpponent_[i].addMonster(objectMonsterArray_[rand() % MONSTER_SIZE]);
         }
     }
 }
@@ -115,7 +117,16 @@ void opponentRandomizer(Opponent objectOpponent_[])
 void titleScreen()
 {
     // if we do pvp encounter we can have the user select which `game mode` here.
-    cout << "MONSTERS" << endl << endl;
+cout << "  _____             _                           " << endl;
+cout << " |  __ \\           | |                          " << endl;
+cout << " | |  | |_   _  ___| | ___ __ ___   ___  _ __   " << endl;
+cout << " | |  | | | | |/ __| |/ / '_ ` _ \\ / _ \\| '_ \\  " << endl;
+cout << " | |__| | |_| | (__|   <| | | | | | (_) | | | | " << endl;
+cout << " |_____/ \\__,_|\\___|_|\\_\\_| |_| |_|\\___/|_| |_| " << endl << endl;
+
+
+
+
 }
 
 void nameSelection(Player& objectPlayer_)
@@ -130,53 +141,39 @@ void nameSelection(Player& objectPlayer_)
     cout << endl;
 }
 
-void monsterSelection(Player& objectPlayer_)
+void monsterSelection(Player& objectPlayer_, const Monster objectMonsterArray_[])
 {
     int userChoice_;
     string numberLetter[3] = { "first", "second", "third" };
 
-    const int ARRAY_MONSTER_SIZE = 6; // easily add more monsters
-    Monster arrayMonster[ARRAY_MONSTER_SIZE] =
-    {
-        Monster("Aeroquack", "Wind"),
-        Monster("Zephyrtail", "Wind"),
-        Monster("Aquaquack", "Water"),
-        Monster("Torrentail", "Water"),
-        Monster("Saxoheat", "Fire"),
-        Monster("Charyuga", "Fire")
-    };
-
-    Monster* objectMonsterPtr_ = new Monster();
-
-    for(int i = 0; i < ARRAY_MONSTER_SIZE; i++)
+    for(int i = 0; i < MONSTER_SIZE; i++)
     {
         cout << "[" << i + 1 << "]" << endl;
-        cout << arrayMonster[i] << endl;
+        cout << objectMonsterArray_[i] << endl;
     }
 
     cout << "Choose a party size of 3!" <<endl;
 
     int userGate_ = 0;
-    while(userGate_ < 3)
+    while(userGate_ < 3) // has to be three
     {
         cout << "Enter the [#] of your " << numberLetter[userGate_] << " monster: ";
         cin >> userChoice_;
 
-        if(userChoice_ > 0 && userChoice_ <= ARRAY_MONSTER_SIZE) // from 1 to ARRAY_MONSTERS_SIZE
+        if(userChoice_ > 0 && userChoice_ <= MONSTER_SIZE) // from 1 to ARRAY_MONSTERS_SIZE
         {
-            *objectMonsterPtr_ = arrayMonster[userChoice_ - 1];
-            objectPlayer_.addMonster(*objectMonsterPtr_);
-
+            objectPlayer_.addMonster(objectMonsterArray_[userChoice_ - 1]);
             userGate_++;
         }
         else // not valid input
         {
-            cout << "Not possible! Type a number from 1 to " << ARRAY_MONSTER_SIZE << endl;
+            cout << "Not possible! Type a number from 1 to " << MONSTER_SIZE << endl;
         }
     }
 
+    objectPlayer_.monsterTagging();
+
     cout << endl;
-    delete objectMonsterPtr_;
 }
 
 int monsterSpecificSelection(Player& objectPlayer_)
@@ -199,6 +196,7 @@ int monsterSpecificSelection(Player& objectPlayer_)
         }
     }
 }
+
 
 void battleScreen(Opponent& objectOpponent_)
 {
