@@ -6,9 +6,8 @@ class Opponent : public Player
 public:
     Opponent();
 
-    Monster selectMonster();
-    int randomChoice(Monster* objectMonster_);
-    int randomMonsterChoice();
+    Monster selectMonster(); //random opponent choice
+    int randomChoice(Monster* objectMonster_); //healing odds
 };
 
 #endif // OPPONENT_HPP_INCLUDED

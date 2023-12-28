@@ -18,14 +18,13 @@ public:
     ~Battleground();
 
     // member functions
-    bool battleCriticalHit(int chance_);
+    bool isCriticalHit(int chance);
 
-    double getBattleAttack(Monster* objectMonsterAttack_, Monster* objectMonsterDefend_);
-    double getBattleHealth(Monster* objectMonster_);
+    double getDamage(Monster* attacker, Monster* defender);
+    void healCheck(Monster* duck);
 
     void choosePlayerMonsterToFight();
     void chooseOpponentMonsterToFight();
-
 
     int battleInput();
     void battleLoop();

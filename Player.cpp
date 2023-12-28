@@ -3,7 +3,6 @@
 #include "Monster.hpp"
 #include "Player.hpp"
 
-// constructor
 Player::Player()
 {
     name = "NA";
@@ -14,7 +13,6 @@ Player::Player(string name_)
     name = name_;
 }
 
-// getters
 string Player::getName() const
 {
     return name;
@@ -22,27 +20,25 @@ string Player::getName() const
 
 vector<Monster> Player::getMonsterInventory()
 {
-    return monsterInventory;
+    return monsterInventory; //returns user Duckmon inventory
 }
 
 int Player::getSize() const
 {
-    return monsterInventory.size();
+    return monsterInventory.size(); //returns amount of Duckmon user has
 }
 
-// setters
 void Player::setName(string name_)
 {
     name = name_;
 }
 
-// indexing
 void Player::addMonster(Monster objectMonster_)
 {
-    monsterInventory.push_back(objectMonster_);
+    monsterInventory.push_back(objectMonster_); //adds a Duckmon to player inventory
 }
 
-void Player::removeMonster(Monster objectMonster_)
+void Player::removeMonster(Monster objectMonster_) //removes Duckmon from inventory
 {
     for(int i = 0; i < monsterInventory.size(); i++)
     {
@@ -54,7 +50,7 @@ void Player::removeMonster(Monster objectMonster_)
     }
 }
 
-void Player::updateMonsterInVector(Monster* objectMonster_)
+void Player::updateMonsterInVector(Monster* objectMonster_) //for switching Duckmon and keeping stats the same after swtich
 {
 
     bool found = false;
@@ -75,7 +71,7 @@ void Player::updateMonsterInVector(Monster* objectMonster_)
     }
 }
 
-void Player::displayAllMonster()
+void Player::displayAllMonster() //displays user Duckmon inventory
 {
     for(int i = 0; i < monsterInventory.size(); i++)
     {
@@ -84,12 +80,12 @@ void Player::displayAllMonster()
     }
 }
 
-Monster Player::selectMonster(int index_)
+Monster Player::selectMonster(int index_) //allows user to select a Duckmon
 {
     return monsterInventory[index_];
 }
 
-void Player::monsterTagging()
+void Player::monsterTagging() //assigns a number to each Duckmon for other uses
 {
     for(int i = 0; i < monsterInventory.size(); i++)
     {
